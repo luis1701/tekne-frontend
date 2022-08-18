@@ -3,8 +3,27 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header/Header';
 import NewProduct from './components/Products/NewProduct';
 import ProductList from './components/Products/ProductList';
+import Login from './components/Login/Login';
 import { fecthProducts } from './Api/products';
 import './App.css';
+
+function RequireAuth(Component) {
+  return function () {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const isAuth = () => {
+      const authInfo = localStorage.getItem('acces_token')
+      if (authInfo) {
+        setIsAuthenticated(true)
+      }
+    };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      isAuth()
+    }, [])
+    return isAuthenticated ? <Component /> : <Login onCompleteLogin={isAuth}/>
+  }
+}
 
 function App() {
   const [loadedProducts, setLoadedProducts] = useState([]);
@@ -81,4 +100,6 @@ function App() {
   );
 }
 
-export default App;
+
+
+export default RequireAuth(App);

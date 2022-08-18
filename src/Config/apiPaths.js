@@ -5,5 +5,8 @@ export const API_PATHS = {
     getAll: '/products',
     put: '',
     remove: '/products',
+  },
+  auth: {
+    login: '/login'
   }
 }
