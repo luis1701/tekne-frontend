@@ -6,8 +6,7 @@ export const fecthProducts =  async () => {
     const response = await api.get(API_PATHS.products.getAll);
     return response;
   } catch (error) {
-    console.error('error on fecthProducts', error);
-    return null;
+    return error.response;
   }
 }
 

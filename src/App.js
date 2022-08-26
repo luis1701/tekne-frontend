@@ -28,12 +28,29 @@ function RequireAuth(Component) {
 function App() {
   const [loadedProducts, setLoadedProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [reloading, setReloading] = useState(false);
 
   const getAllProducts = async () => {
-    const response = await fecthProducts()
-    const responseData = response.data;
-    console.log(responseData.products)
-    setLoadedProducts(responseData.products);
+    const response = await fecthProducts();
+
+    if(response.status === 200){
+      const responseData = response.data;
+      console.log(responseData)
+      setLoadedProducts(responseData.products);
+    } else if( response.status === 401 ){
+      if(response.error || response.data.error ){
+        localStorage.clear();
+        window.location.reload(true);
+      } else {
+        console.log('PASA POR ACAA........', response.data, 'status', response.status);
+        localStorage.setItem('acces_token', response.data.data.access_token);
+        localStorage.setItem('refresh_token', response.data.data.refresh_token);
+        setReloading(true);
+      }
+    } else {
+      console.log("error ", response);
+    }
+    
   }
 
   useEffect(() => {
@@ -44,7 +61,7 @@ function App() {
     };
 
     fetchProducts();
-  }, []);
+  }, [reloading]);
 
   const addProductHandler = async (productName, productPrice) => {
     try {
